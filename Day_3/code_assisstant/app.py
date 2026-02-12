@@ -81,56 +81,183 @@ def is_allowed(message: str) -> bool:
     msg = message.lower()
     return any(word in msg for word in CODING_KEYWORDS)
 
-
 @app.route("/")
 def home():
     return render_template_string("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Coding RAG Assistant</title>
-        <style>
-            body { font-family: Arial; background:#111; color:white; }
-            .chat-box { width:700px; margin:40px auto; }
-            .messages { height:450px; overflow-y:auto; border:1px solid #444; padding:10px; }
-            input { width:80%; padding:10px; }
-            button { padding:10px; }
-        </style>
-    </head>
-    <body>
-    <div class="chat-box">
-        <h2>💻 Coding RAG Assistant</h2>
-        <div class="messages" id="messages"></div>
-        <br>
-        <input type="text" id="message" placeholder="Ask coding question...">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coding RAG Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+            color: white;
+            display: flex;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            border-bottom: 1px solid #333;
+            background: #111;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            line-height: 1.5;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: #2563eb;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot {
+            align-self: flex-start;
+            background: #2a2a2a;
+            border-bottom-left-radius: 5px;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #333;
+            background: #111;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background: #1f1f1f;
+            color: white;
+            font-size: 15px;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .typing {
+            font-style: italic;
+            opacity: 0.6;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(5px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        @media (max-width: 600px) {
+            .message { max-width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="header">💻 Coding RAG Assistant</div>
+    <div class="messages" id="messages"></div>
+
+    <div class="input-area">
+        <input type="text" id="message" placeholder="Ask coding question..." onkeydown="handleKey(event)">
         <button onclick="sendMessage()">Send</button>
     </div>
+</div>
 
-    <script>
-    function sendMessage() {
-        const msgInput = document.getElementById("message");
-        const msg = msgInput.value;
-        const messagesDiv = document.getElementById("messages");
+<script>
 
-        messagesDiv.innerHTML += `<p><b>You:</b> ${msg}</p>`;
-
-        fetch("/chat", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({message: msg})
-        })
-        .then(res => res.json())
-        .then(data => {
-            messagesDiv.innerHTML += `<p><b>Bot:</b> ${data.reply}</p>`;
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        });
-
-        msgInput.value = "";
+function handleKey(e) {
+    if (e.key === "Enter") {
+        sendMessage();
     }
-    </script>
-    </body>
-    </html>
-    """)
+}
+
+function addMessage(text, type) {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", type);
+    msgDiv.innerHTML = text.replace(/\\n/g, "<br>");
+    document.getElementById("messages").appendChild(msgDiv);
+    document.getElementById("messages").scrollTop =
+        document.getElementById("messages").scrollHeight;
+}
+
+function sendMessage() {
+    const input = document.getElementById("message");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, "user");
+    input.value = "";
+
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("message", "bot", "typing");
+    typingDiv.id = "typing";
+    typingDiv.innerHTML = "Typing...";
+    document.getElementById("messages").appendChild(typingDiv);
+
+    fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({message: msg})
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("typing").remove();
+        addMessage(data.reply, "bot");
+    })
+    .catch(() => {
+        document.getElementById("typing").remove();
+        addMessage("⚠️ Error connecting to server.", "bot");
+    });
+}
+
+</script>
+
+</body>
+</html>
+""")
+
 
 
 @app.route("/chat", methods=["POST"])
@@ -167,10 +294,7 @@ def chat():
 
     try:
         r = requests.post(URL, headers=HEADERS, json=payload, timeout=30)
-        print("Status:", r.status_code)
-        print("Response:", r.text)
         r.raise_for_status()
-
         data = r.json()
         reply = data["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})

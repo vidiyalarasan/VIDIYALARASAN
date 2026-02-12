@@ -1,5 +1,4 @@
 import os
-import langchain
 from openai import OpenAI
 
 client = OpenAI(
