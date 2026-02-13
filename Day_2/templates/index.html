@@ -3,121 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <title>AI Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --bg: #f7f7f8;
-    --panel: #ffffff;
-    --border: #e5e7eb;
-    --text: #111827;
-    --muted: #6b7280;
-    --user: #f1f5f9;
+:root{
+    --bg1:#0f172a;
+    --bg2:#1e293b;
+    --glass:rgba(255,255,255,0.06);
+    --border:rgba(255,255,255,0.08);
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --accent:#6366f1;
+    --user:#4f46e5;
 }
 
-body {
-    margin: 0;
-    background: var(--bg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--text);
+*{
+    box-sizing:border-box;
 }
 
-.chat-wrapper {
-    max-width: 760px;
-    margin: auto;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+body{
+    margin:0;
+    height:100vh;
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:var(--text);
 }
 
-.header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-    font-weight: 600;
+/* Container */
+.chat-wrapper{
+    width:100%;
+    max-width:900px;
+    height:92vh;
+    display:flex;
+    flex-direction:column;
+    backdrop-filter:blur(25px);
+    background:var(--glass);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 60px rgba(0,0,0,0.6);
 }
 
-.header span {
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: normal;
+/* Header */
+.header{
+    padding:18px 24px;
+    font-weight:600;
+    font-size:18px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.messages {
-    flex: 1;
-    padding: 24px 20px;
-    overflow-y: auto;
+.header span{
+    font-size:13px;
+    color:var(--muted);
 }
 
-.message {
-    display: flex;
-    margin-bottom: 24px;
+/* Messages */
+.messages{
+    flex:1;
+    padding:30px;
+    overflow-y:auto;
+    scroll-behavior:smooth;
 }
 
-.message.user {
-    justify-content: flex-end;
+.message{
+    display:flex;
+    margin-bottom:22px;
+    animation:fadeIn 0.3s ease;
 }
 
-.bubble {
-    max-width: 90%;
-    padding: 14px 16px;
-    border-radius: 8px;
-    line-height: 1.5;
-    white-space: pre-wrap;
+.message.user{
+    justify-content:flex-end;
 }
 
-.user .bubble {
-    background: var(--user);
+.bubble{
+    max-width:75%;
+    padding:14px 18px;
+    border-radius:18px;
+    font-size:15px;
+    line-height:1.6;
+    white-space:pre-wrap;
 }
 
-.bot .bubble {
-    background: var(--panel);
-    border: 1px solid var(--border);
+.bot .bubble{
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--border);
 }
 
-.input-wrapper {
-    padding: 16px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--panel);
+.user .bubble{
+    background:var(--user);
 }
 
-.input-box {
-    display: flex;
-    align-items: center;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
 }
 
-textarea {
-    flex: 1;
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 15px;
-    max-height: 160px;
-    font-family: inherit;
+/* Input */
+.input-wrapper{
+    padding:20px;
+    border-top:1px solid var(--border);
+    background:rgba(0,0,0,0.2);
 }
 
-button {
-    background: #111827;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 14px;
-    margin-left: 10px;
-    cursor: pointer;
+.input-box{
+    display:flex;
+    align-items:center;
+    background:rgba(255,255,255,0.05);
+    border-radius:14px;
+    padding:10px 14px;
+    border:1px solid var(--border);
 }
 
-button:hover {
-    opacity: 0.9;
+textarea{
+    flex:1;
+    background:none;
+    border:none;
+    outline:none;
+    color:white;
+    resize:none;
+    font-size:15px;
+    font-family:inherit;
+    max-height:140px;
 }
 
-.footer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    padding: 8px;
+textarea::placeholder{
+    color:var(--muted);
+}
+
+button{
+    background:var(--accent);
+    border:none;
+    color:white;
+    padding:10px 18px;
+    border-radius:12px;
+    font-weight:500;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 12px var(--accent);
+}
+
+/* Typing indicator */
+.typing{
+    display:flex;
+    gap:5px;
+    padding-left:5px;
+}
+
+.dot{
+    width:6px;
+    height:6px;
+    background:#cbd5e1;
+    border-radius:50%;
+    animation:bounce 1s infinite;
+}
+
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+
+@keyframes bounce{
+    0%,80%,100%{transform:scale(0);}
+    40%{transform:scale(1);}
+}
+
+/* Scrollbar */
+.messages::-webkit-scrollbar{
+    width:6px;
+}
+.messages::-webkit-scrollbar-thumb{
+    background:#334155;
+    border-radius:10px;
 }
 </style>
 </head>
@@ -125,15 +191,16 @@ button:hover {
 <body>
 
 <div class="chat-wrapper">
+
     <div class="header">
-        AI Chat
+        🤖 AI Chat
         <span>Casual + SQL only</span>
     </div>
 
     <div class="messages" id="messages">
         <div class="message bot">
             <div class="bubble">
-                Hello 👋  
+                Hello 👋
                 You can ask <b>casual questions</b> or <b>SQL-related queries</b>.
             </div>
         </div>
@@ -142,15 +209,12 @@ button:hover {
     <div class="input-wrapper">
         <div class="input-box">
             <textarea id="input" rows="1"
-             placeholder="Message AI…"
-             onkeydown="handleKey(event)"></textarea>
+            placeholder="Ask something..."
+            onkeydown="handleKey(event)"></textarea>
             <button onclick="send()">Send</button>
         </div>
     </div>
 
-    <div class="footer">
-        AI may produce inaccurate information. SQL only.
-    </div>
 </div>
 
 <script>
@@ -163,36 +227,62 @@ function addMessage(text, role) {
 
     const bubble = document.createElement("div");
     bubble.className = "bubble";
-    bubble.textContent = text;
+    bubble.innerHTML = text;
 
     msg.appendChild(bubble);
     messages.appendChild(msg);
     messages.scrollTop = messages.scrollHeight;
 }
 
-function send() {
+function showTyping(){
+    const msg = document.createElement("div");
+    msg.className = "message bot";
+    msg.id = "typing";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble typing";
+    bubble.innerHTML = `
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    `;
+
+    msg.appendChild(bubble);
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function removeTyping(){
+    const typing = document.getElementById("typing");
+    if(typing) typing.remove();
+}
+
+function send(){
     const text = input.value.trim();
-    if (!text) return;
+    if(!text) return;
 
-    addMessage(text, "user");
-    input.value = "";
+    addMessage(text,"user");
+    input.value="";
+    showTyping();
 
-    fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
+    fetch("/chat",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({message:text})
     })
-    .then(res => res.json())
-    .then(data => {
-        addMessage(data.reply, "bot");
+    .then(res=>res.json())
+    .then(data=>{
+        removeTyping();
+        addMessage(data.reply,"bot");
     })
-    .catch(() => {
-        addMessage("⚠️ Server error", "bot");
+    .catch(()=>{
+        removeTyping();
+        addMessage("⚠️ Server error","bot");
     });
 }
 
-function handleKey(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
+function handleKey(e){
+    if(e.key==="Enter" && !e.shiftKey){
         e.preventDefault();
         send();
     }
