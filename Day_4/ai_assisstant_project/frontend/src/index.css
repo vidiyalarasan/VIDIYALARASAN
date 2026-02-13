@@ -1,0 +1,40 @@
+/* ===== ROOT DESIGN SYSTEM ===== */
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --accent: #00f5a0;
+  --accent-2: #00d9f5;
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+}
+
+/* ===== RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== BODY ===== */
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #0f172a);
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ===== SMOOTH BACKGROUND ANIMATION ===== */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== REMOVE DEFAULT BUTTON STYLES ===== */
+button {
+  font-family: inherit;
+  border: none;
+  outline: none;
+}

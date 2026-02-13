@@ -26,4 +26,4 @@ creativity_level, style, token_length = select_creativity_level(text)
 
 print("Token count:", token_length)
 print("Creativity level:", creativity_level)
-print("Response style:", style)
+print("Response styles:", style)

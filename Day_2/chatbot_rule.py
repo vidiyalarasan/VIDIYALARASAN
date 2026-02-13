@@ -36,7 +36,7 @@ def is_allowed(message: str) -> bool:
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("landing.html")
 
 
 @app.route("/chat", methods=["POST"])

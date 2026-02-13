@@ -113,7 +113,7 @@ def home():
 href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
-<style>
+<styles>
 :root{
     --bg1:#0f172a;
     --bg2:#1e293b;
@@ -258,7 +258,7 @@ button:hover{
     from{opacity:0;transform:translateY(5px);}
     to{opacity:1;transform:translateY(0);}
 }
-</style>
+</styles>
 </head>
 
 <body>
